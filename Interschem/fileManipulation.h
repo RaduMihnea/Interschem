@@ -1,3 +1,3 @@
 #pragma once
 
-void codeFromFile();
+void codeFromFile(std::string path);

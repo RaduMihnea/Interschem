@@ -32,9 +32,6 @@
     <ClInclude Include="menuActions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="fileSchema.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="enums.h">
       <Filter>Header Files</Filter>
     </ClInclude>

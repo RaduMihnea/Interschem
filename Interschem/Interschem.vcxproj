@@ -162,7 +162,6 @@
     <ClInclude Include="enums.h" />
     <ClInclude Include="eval.h" />
     <ClInclude Include="fileManipulation.h" />
-    <ClInclude Include="fileSchema.h" />
     <ClInclude Include="fonts.h" />
     <ClInclude Include="menuActions.h" />
     <ClInclude Include="resource.h" />

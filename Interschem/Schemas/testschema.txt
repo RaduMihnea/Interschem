@@ -1,3 +1,5 @@
 STR 2
-OPP X (X*2)/4 3
+IPT X 3
+OPP X (X*2)/4 4
+PRT X 5
 FIN

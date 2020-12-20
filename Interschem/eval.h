@@ -251,11 +251,11 @@ void parseExpresion(std::string expression, functie &Functie) {
     strcpy(Functie.vect[len], ")"); //!!!
     Functie.lung = len;
 
-    //std::cout << "Expresie: " << Functie.expresie<<std::endl;
-    //std::cout << "Lungime: "<< Functie.lung << std::endl;
-    //std::cout << "Vector: ";
-    //for (int i = 0; i <= Functie.lung; i++)std::cout << Functie.vect[i];
-    //std::cout << std::endl;
+    std::cout << "Expresie: " << Functie.expresie<<std::endl;
+    std::cout << "Lungime: "<< Functie.lung << std::endl;
+    std::cout << "Vector: ";
+    for (int i = 0; i <= Functie.lung; i++)std::cout << Functie.vect[i];
+    std::cout << std::endl;
 }
 
 double valoare(std::string expression, double x) {

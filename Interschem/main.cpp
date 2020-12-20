@@ -143,7 +143,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Interschem", sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
-    codeFromFile();
+    std::string path = "Schemas/testschema.txt";
 
     while (window.isOpen())
     {
@@ -163,8 +163,9 @@ int main()
                         handleInputChange(event.text, inputrighttext);
                     break;
                 case sf::Event::MouseButtonPressed:
-                    std::cout << event.mouseButton.x << " " << event.mouseButton.y << " " << mouseSelect(event.mouseButton.x, event.mouseButton.y) <<std::endl;
+                    //std::cout << event.mouseButton.x << " " << event.mouseButton.y << " " << mouseSelect(event.mouseButton.x, event.mouseButton.y) <<std::endl;
                     selectedArea = mouseSelect(event.mouseButton.x, event.mouseButton.y);
+                    if (selectedArea == createButton)codeFromFile(path);
                     break;
                 default:
                         break;

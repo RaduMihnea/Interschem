@@ -246,6 +246,7 @@ void parseExpresion(std::string expression, functie &Functie) {
 
     strcpy(Functie.vect[0], "("); //!!!
     for (int i = 1; i <= len; i++) {
+        if (isdigit(expression[i]))continue;
         strcpy(Functie.vect[i], expression.substr(i - 1, 1).c_str());
     }
     strcpy(Functie.vect[len], ")"); //!!!

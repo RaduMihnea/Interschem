@@ -18,7 +18,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="fileManipulation.cpp">
+    <ClCompile Include="runCode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,10 +35,10 @@
     <ClInclude Include="enums.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="fileManipulation.h">
+    <ClInclude Include="exprtk.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="eval.h">
+    <ClInclude Include="runCode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,5 +1,0 @@
-STR 2
-IPT X 3
-OPP X (X*2)/4 4
-PRT X 5
-FIN

@@ -1,0 +1,5 @@
+STR 2
+IPT x 3
+OPP x:=20 4
+PRT x 5
+FIN

@@ -1,0 +1,3 @@
+STR 0
+STR 0
+FIN

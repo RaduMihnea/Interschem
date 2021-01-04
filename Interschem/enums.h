@@ -1,17 +1,26 @@
 #pragma once
 
 enum selectedAreas {
-	inputleft,
-	inputmid,
-	inputright,
+	input,
+	path,
 	createButton,
+	importButton,
+	saveButton,
 	pieceStart,
 	pieceFinal,
+	pieceInput,
+	pieceOutput,
+	pieceOperation,
+	pieceIf,
 	none
 };
 
-enum asmCodes {
+enum class InstructionType
+{
 	STR,
-	FIN,
-
+	IPT,
+	PRT,
+	OPP,
+	IFF,
+	FIN
 };

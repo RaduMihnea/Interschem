@@ -3,8 +3,9 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#include "runCode.h"
+#include "instructionStructure.h"
 #include "exprtk.hpp"
+#include "instructionActions.h"
 
 
 typedef exprtk::symbol_table<double> symbol_table_t;
@@ -21,61 +22,16 @@ struct Variable
     std::string name;
 };
 
-struct StartInstruction
-{
-    int nextIns = 0;
-};
-
-struct FinalInstruction {};
-
-struct InputInstruction
-{
-    char* variable;
-    int nextIns = 0;
-};
-
-struct PrintInstruction
-{
-    char* variable;
-    int nextIns = 0;
-};
-
-struct OperationInstruction
-{
-    char* expression;
-    int nextIns = 0;
-};
-
-struct IfInstruction
-{
-    char* expression;
-    int nextInsTrue = 0;
-    int nextInsFalse = 0;
-};
-
-struct Instruction
-{
-    InstructionType type;
-    union {
-        StartInstruction str;
-        FinalInstruction fin;
-        InputInstruction ipt;
-        PrintInstruction prt;
-        OperationInstruction opp;
-        IfInstruction iff;
-    };
-
-    Instruction() {}
-};
-
-
 Instruction instructions[101];
 Variable variables[101];
 int vars = 1;
 int i = 1;
 
-void runInstruction(int instructionNo) {
+void runInstruction(int instructionNo) 
+{
+
     Instruction instruction = instructions[instructionNo];
+
     switch (instruction.type) {
     case InstructionType::STR:
         runInstruction(instruction.str.nextIns);
@@ -109,11 +65,61 @@ void runInstruction(int instructionNo) {
         if (expression.value())runInstruction(instruction.iff.nextInsTrue);
             else runInstruction(instruction.iff.nextInsFalse);
         break;
+    default:
+        break;
     }
 }
 
+void runCode() {
+    runInstruction(1);
+}
 
-void saveToFile(std::string path) {
+void createCode() 
+{
+
+    std::cout << "#include <iostream>" << std::endl << "#include <stdlib.h>" << std::endl << "using namespace std;" << std::endl << std::endl;
+    std::cout << "int main(){" << std::endl;
+
+    for (int j = 1; j < i; j++) {
+        Instruction instruction = instructions[j];
+        std::string expr;
+        switch (instruction.type) {
+            case InstructionType::STR:
+                break;
+            case InstructionType::FIN:
+                break;
+            case InstructionType::IPT:
+                std::cout << "line" << j << ":" << std::endl;
+                std::cout << "double " << instruction.ipt.variable << ";" << std::endl;
+                std::cout << "cin >> " << instruction.ipt.variable << ";" << std::endl;
+                if (instruction.ipt.nextIns != j + 1)std::cout << "goto(" << instruction.ipt.nextIns << ");" << std::endl;
+                break;
+            case InstructionType::PRT:
+                std::cout << "line" << j << ":" << std::endl;
+                std::cout << "cout<<" << instruction.prt.variable << ";" << std::endl;
+                if (instruction.prt.nextIns != j + 1)std::cout << "goto(" << instruction.prt.nextIns << ");" << std::endl;
+                break;
+            case InstructionType::IFF:
+                std::cout << "line" << j << ":" << std::endl;
+                std::cout << "if(" << instruction.iff.expression << ")" << "goto line" << instruction.iff.nextInsTrue << ";" << std::endl;
+                std::cout << "else goto line" << instruction.iff.nextInsFalse << ";" << std::endl;
+                break;
+            case InstructionType::OPP:
+                std::cout << "line" << j << ":" << std::endl;
+                expr.assign(instruction.opp.expression);
+                if (expr.substr(1, 2) == ":=")std::cout << expr.substr(0, 1) << "=" << expr.substr(3) << std::endl;
+                else std::cout << expr << ";" << std::endl;
+                if (instruction.opp.nextIns != j + 1)std::cout << "goto line" << instruction.opp.nextIns << ";" << std::endl;
+                break;
+            default:
+                break;
+        }
+    }
+    std::cout << "}";
+}
+
+void saveToFile(std::string path) 
+{
 
     std::string finalPath = "Schemas/" + path + ".sch";
 
@@ -144,13 +150,15 @@ void saveToFile(std::string path) {
                 break;
         }
     }
+
     file.close();
 }
 
-void importFromFile(std::string path) {
+void importFromFile(std::string path) 
+{
 
     int ok = 0;
-    int i = 1;
+    i = 1;
     vars = 1;
 
     std::string finalPath = "Schemas/" + path + ".sch";
@@ -263,10 +271,10 @@ void importFromFile(std::string path) {
     if (ok == 0) { std::cout << "ERROR NO FILE STOP" << std::endl; return; }
     if (instructions[1].type != InstructionType::STR) { std::cout << "ERROR NO FILE START" << std::endl; return; }
 
-    runInstruction(1);
 }
 
-void iterateInstructions() {
+void iterateInstructions() 
+{
     for (int j = 1; j < i; j++) {
         switch (instructions[j].type) {
         case InstructionType::STR:
@@ -287,23 +295,30 @@ void iterateInstructions() {
         case InstructionType::IFF:
             std::cout << "IFF ";
             break;
+        default:
+            break;
         }
     }
     std::cout << std::endl;
 }
 
+void addInstruction(selectedAreas type, std::string input)
+{
 
-void addInstruction(int type, std::string input) {
     switch (type){
-        case pieceStart:
+        case selectedAreas::pieceStart:
             instructions[i].type = InstructionType::STR;
+            instructions[i].str.x = 250.f;
+            instructions[i].str.y = 30.f;
             instructions[i++].str;
             break;
-        case pieceFinal:
+        case selectedAreas::pieceFinal:
             instructions[i].type = InstructionType::FIN;
+            instructions[i].fin.x = 250.f;
+            instructions[i].fin.y = 70.f;
             instructions[i++].fin;
             break;
-        case pieceInput:
+        case selectedAreas::pieceInput:
             if (input.empty()) {
                 std::cout << "ERROR: ENTER INPUT VARIABLE" << std::endl;
                 break;
@@ -312,7 +327,7 @@ void addInstruction(int type, std::string input) {
             instructions[i].ipt.variable = new char[input.size() + 1];
             strcpy(instructions[i++].ipt.variable,input.c_str());
             break;
-        case pieceOutput:
+        case selectedAreas::pieceOutput:
             if (input.empty()) {
                 std::cout << "ERROR: ENTER OUTPUT VARIABLE" << std::endl;
                 break;
@@ -321,7 +336,7 @@ void addInstruction(int type, std::string input) {
             instructions[i].prt.variable = new char[input.size() + 1];
             strcpy(instructions[i++].prt.variable, input.c_str());
             break;
-        case pieceOperation:
+        case selectedAreas::pieceOperation:
             if (input.empty()) {
                 std::cout << "ERROR: ENTER OPERATION EXPRESSION" << std::endl;
                 break;
@@ -330,7 +345,7 @@ void addInstruction(int type, std::string input) {
             instructions[i].opp.expression = new char[input.size() + 1];
             strcpy(instructions[i++].opp.expression, input.c_str());
             break;
-        case pieceIf:
+        case selectedAreas::pieceIf:
             if (input.empty()) {
                 std::cout << "ERROR: ENTER IF EXPRESSION" << std::endl;
                 break;
@@ -339,6 +354,26 @@ void addInstruction(int type, std::string input) {
             instructions[i].iff.expression = new char[input.size() + 1];
             strcpy(instructions[i++].iff.expression, input.c_str());
             break;
+        default:
+            break;
     }
+
     iterateInstructions();
+
+}
+
+void drawPieces(sf::RenderWindow &window, sf::Font &font) {
+    for (int j = 1; j < i; j++) {
+        Instruction instruction = instructions[j];
+        switch (instruction.type) {
+            case InstructionType::STR:
+                instruction.str.draw(font, window);
+                break;
+            case InstructionType::FIN:
+                instruction.fin.draw(font, window);
+                break;
+            default:
+                break;
+        }
+    }
 }

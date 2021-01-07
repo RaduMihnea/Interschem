@@ -1,9 +1,11 @@
 #pragma once
 
-enum selectedAreas {
+enum class selectedAreas {
 	input,
 	path,
 	createButton,
+	runButton,
+	generateButton,
 	importButton,
 	saveButton,
 	pieceStart,

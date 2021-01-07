@@ -2,8 +2,8 @@ STR 2
 IPT X 3
 IPT Y 4
 IFF X=Y 5 7
-OPP X/=2 6
+OPP X/=2 7
 PRT X 7
-OPP Y*=2 8
+OPP Y:=2 8
 PRT Y 9
 FIN

@@ -157,14 +157,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="runCode.cpp" />
+    <ClCompile Include="fonts.cpp" />
+    <ClCompile Include="instructionDrawing.cpp" />
+    <ClCompile Include="instructionActions.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="instructionDrawing.h" />
     <ClInclude Include="enums.h" />
     <ClInclude Include="exprtk.hpp" />
-    <ClInclude Include="runCode.h" />
+    <ClInclude Include="instructionActions.h" />
     <ClInclude Include="fonts.h" />
+    <ClInclude Include="instructionStructure.h" />
     <ClInclude Include="menuActions.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>

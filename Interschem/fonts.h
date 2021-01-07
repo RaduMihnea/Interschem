@@ -1,5 +1,7 @@
+#pragma once
+#ifndef FONTS_INCLUDED
+#define FONTS_INCLUDED
 #include <SFML/Graphics.hpp>
-#include <iostream>
 
 sf::Font WorkSans_Black;
 sf::Font WorkSans_BlackItalic;
@@ -40,3 +42,4 @@ void fonts()
 		std::cout << "ERROR LOADING FONT";
 	}
 }
+#endif

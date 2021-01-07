@@ -18,7 +18,13 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="runCode.cpp">
+    <ClCompile Include="instructionDrawing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="instructionActions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fonts.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -38,7 +44,13 @@
     <ClInclude Include="exprtk.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="runCode.h">
+    <ClInclude Include="instructionStructure.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="instructionActions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="instructionDrawing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

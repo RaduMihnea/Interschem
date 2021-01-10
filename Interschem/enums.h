@@ -8,6 +8,7 @@ enum class selectedAreas {
 	generateButton,
 	importButton,
 	saveButton,
+	resetButton,
 	pieceStart,
 	pieceFinal,
 	pieceInput,
@@ -24,5 +25,6 @@ enum class InstructionType
 	PRT,
 	OPP,
 	IFF,
-	FIN
+	FIN,
+	NLL
 };

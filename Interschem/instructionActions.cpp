@@ -8,6 +8,9 @@
 #include "instructionActions.h"
 
 
+#define BACKSPACE 0x00000008
+
+
 typedef exprtk::symbol_table<double> symbol_table_t;
 typedef exprtk::expression<double>     expression_t;
 typedef exprtk::parser<double>             parser_t;
@@ -24,13 +27,155 @@ struct Variable
 
 Instruction instructions[101];
 Variable variables[101];
+
 int vars = 1;
 int i = 1;
 
+int varExists(char* variable) {
+    for (int j = 1; j < vars; j++) {
+        if (variables[j].name == variable)return j;
+    }
+    return 0;
+}
+
+void makeConnections() {
+    for (int j = 1; j < i; j++) {
+        switch (instructions[j].type) {
+        case InstructionType::STR:
+            makeConnection(j, instructions[j].str.nextIns);
+            break;
+        case InstructionType::FIN:
+            break;
+        case InstructionType::IPT:
+            makeConnection(j, instructions[j].ipt.nextIns);
+            break;
+        case InstructionType::PRT:
+            makeConnection(j, instructions[j].prt.nextIns);
+            break;
+        case InstructionType::OPP:
+            makeConnection(j, instructions[j].opp.nextIns);
+            break;
+        case InstructionType::IFF:
+            makeConnection(j, instructions[j].iff.nextInsTrue);
+            makeConnectionRight(j, instructions[j].iff.nextInsFalse);
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void makeConnection(int p1, int p2) {
+    switch (instructions[p1].type) {
+    case InstructionType::STR:
+        instructions[p1].str.nextIns = p2;
+        if (!p2) {
+            std::cout << "AICI " <<p1<< std::endl;
+            instructions[p1].str.connection.startPos = nullptr;
+            instructions[p1].str.connection.startSize = { 0,0 };
+            instructions[p1].str.connection.endPos = nullptr;
+            instructions[p1].str.connection.endSize = {0,0};
+        }
+        else {
+            instructions[p1].str.connection.startPos = &instructions[p1].positions;
+            instructions[p1].str.connection.startSize = instructions[p1].getSize();
+            instructions[p1].str.connection.endPos = &instructions[p2].positions;
+            instructions[p1].str.connection.endSize = instructions[p2].getSize();
+        }
+        break;
+    case InstructionType::FIN:
+        break;
+    case InstructionType::IPT:
+        instructions[p1].ipt.nextIns = p2;
+        if (!p2) {
+            instructions[p1].ipt.connection.startPos = nullptr;
+            instructions[p1].ipt.connection.startSize = {0,0};
+            instructions[p1].ipt.connection.endPos = nullptr;
+            instructions[p1].ipt.connection.endSize = { 0,0 };
+        }
+        else {
+            instructions[p1].ipt.connection.startPos = &instructions[p1].positions;
+            instructions[p1].ipt.connection.startSize = instructions[p1].getSize();
+            instructions[p1].ipt.connection.endPos = &instructions[p2].positions;
+            instructions[p1].ipt.connection.endSize = instructions[p2].getSize();
+        }
+        break;
+    case InstructionType::PRT:
+        instructions[p1].prt.nextIns = p2;
+        if (!p2) {
+            instructions[p1].prt.connection.startPos = nullptr;
+            instructions[p1].prt.connection.startSize = { 0,0 };
+            instructions[p1].prt.connection.endPos = nullptr;
+            instructions[p1].prt.connection.endSize = { 0,0 };
+        }
+        else {
+            instructions[p1].prt.connection.startPos = &instructions[p1].positions;
+            instructions[p1].prt.connection.startSize = instructions[p1].getSize();
+            instructions[p1].prt.connection.endPos = &instructions[p2].positions;
+            instructions[p1].prt.connection.endSize = instructions[p2].getSize();
+        }
+        break;
+    case InstructionType::OPP:
+        instructions[p1].opp.nextIns = p2;
+        if (!p2) {
+            instructions[p1].opp.connection.startPos = nullptr;
+            instructions[p1].opp.connection.startSize = { 0,0 };
+            instructions[p1].opp.connection.endPos = nullptr;
+            instructions[p1].opp.connection.endSize = { 0,0 };
+        }
+        else {
+            instructions[p1].opp.connection.startPos = &instructions[p1].positions;
+            instructions[p1].opp.connection.startSize = instructions[p1].getSize();
+            instructions[p1].opp.connection.endPos = &instructions[p2].positions;
+            instructions[p1].opp.connection.endSize = instructions[p2].getSize();
+        }
+        break;
+    case InstructionType::IFF:
+        instructions[p1].iff.nextInsTrue = p2;
+        if (!p2) {
+            instructions[p1].iff.connectionTrue.startPos = nullptr;
+            instructions[p1].iff.connectionTrue.startSize.x = 0;       
+            instructions[p1].iff.connectionTrue.startSize.y = 0;
+            instructions[p1].iff.connectionTrue.endPos = nullptr;
+            instructions[p1].iff.connectionTrue.endSize = { 0,0 };
+        }
+        else {
+            instructions[p1].iff.connectionTrue.startPos = &instructions[p1].positions;
+            instructions[p1].iff.connectionTrue.startSize.x = 0;
+            instructions[p1].iff.connectionTrue.startSize.y = instructions[p1].getSize().y;
+            instructions[p1].iff.connectionTrue.endPos = &instructions[p2].positions;
+            instructions[p1].iff.connectionTrue.endSize = instructions[p2].getSize();
+        }
+        break;
+    default:
+        break;
+    }
+}
+
+void makeConnectionRight(int p1, int p2) {
+    if (instructions[p1].type == InstructionType::IFF) {
+        instructions[p1].iff.nextInsFalse = p2;
+        if (!p2) {
+            instructions[p1].iff.connectionFalse.startPos = NULL;
+            instructions[p1].iff.connectionFalse.startSize.x = 0;
+            instructions[p1].iff.connectionFalse.startSize.y = 0;
+            instructions[p1].iff.connectionFalse.endPos = NULL;
+            instructions[p1].iff.connectionFalse.endSize = { 0,0 };
+        }
+        else {
+            instructions[p1].iff.connectionFalse.startPos = &instructions[p1].positions;
+            instructions[p1].iff.connectionFalse.startSize.x = instructions[p1].getSize().x*2;
+            instructions[p1].iff.connectionFalse.startSize.y = instructions[p1].getSize().y;
+            instructions[p1].iff.connectionFalse.endPos = &instructions[p2].positions;
+            instructions[p1].iff.connectionFalse.endSize = instructions[p2].getSize();
+        }
+    }
+}
+
 void runInstruction(int instructionNo) 
 {
-
     Instruction instruction = instructions[instructionNo];
+    instructions[instructionNo].selected = true;
 
     switch (instruction.type) {
     case InstructionType::STR:
@@ -42,9 +187,16 @@ void runInstruction(int instructionNo)
     case InstructionType::IPT:
         double value;
         std::cout << "Enter variable's " << instruction.ipt.variable << " value: "; std::cin >> value;
-        variables[vars].name = instruction.ipt.variable; variables[vars].value = value;
-        symbol_table.add_variable(instruction.ipt.variable, variables[vars].value);
-        vars++;
+        if (int v = varExists(instruction.ipt.variable)) {
+            std::cout << "Changed existing value" << std::endl;
+            variables[v].value = value;
+        }
+        else {
+            std::cout << "Added new variable" << std::endl;
+            variables[vars].name = instruction.ipt.variable; variables[vars].value = value;
+            symbol_table.add_variable(instruction.ipt.variable, variables[vars].value);
+            vars++;
+        }
         runInstruction(instruction.ipt.nextIns);
         break;
     case InstructionType::PRT:
@@ -87,17 +239,19 @@ void createCode()
             case InstructionType::STR:
                 break;
             case InstructionType::FIN:
+                std::cout << "line" << j << ":" << std::endl;
+                std::cout << "return 0;" << std::endl;
                 break;
             case InstructionType::IPT:
                 std::cout << "line" << j << ":" << std::endl;
                 std::cout << "double " << instruction.ipt.variable << ";" << std::endl;
                 std::cout << "cin >> " << instruction.ipt.variable << ";" << std::endl;
-                if (instruction.ipt.nextIns != j + 1)std::cout << "goto(" << instruction.ipt.nextIns << ");" << std::endl;
+                if (instruction.ipt.nextIns != j + 1)std::cout << "goto line" << instruction.ipt.nextIns << ";" << std::endl;
                 break;
             case InstructionType::PRT:
                 std::cout << "line" << j << ":" << std::endl;
                 std::cout << "cout<<" << instruction.prt.variable << ";" << std::endl;
-                if (instruction.prt.nextIns != j + 1)std::cout << "goto(" << instruction.prt.nextIns << ");" << std::endl;
+                if (instruction.prt.nextIns != j + 1)std::cout << "goto line" << instruction.prt.nextIns << ";" << std::endl;
                 break;
             case InstructionType::IFF:
                 std::cout << "line" << j << ":" << std::endl;
@@ -122,10 +276,12 @@ void saveToFile(std::string path)
 {
 
     std::string finalPath = "Schemas/" + path + ".sch";
+    std::string finalPathPos = "Schemas/" + path + ".pos";
 
     std::cout << "File saved to: " << finalPath << std::endl;
 
     std::ofstream file(finalPath);
+    std::ofstream file2(finalPathPos);
 
     for (int j = 1; j < i; j++) {
         Instruction instruction = instructions[j];
@@ -149,9 +305,12 @@ void saveToFile(std::string path)
                 file << "IFF " << instruction.iff.expression << " " << instruction.iff.nextInsTrue << " " << instruction.iff.nextInsFalse << std::endl;
                 break;
         }
+        file2 << instruction.positions.x << " " << instruction.positions.y<<" ";
     }
 
     file.close();
+    file2.close();
+    
 }
 
 void importFromFile(std::string path) 
@@ -162,6 +321,7 @@ void importFromFile(std::string path)
     vars = 1;
 
     std::string finalPath = "Schemas/" + path + ".sch";
+    std::string finalPathPos = "Schemas/" + path + ".pos";
 
     std::cout << "File imported from: " << finalPath << std::endl;
 
@@ -271,6 +431,13 @@ void importFromFile(std::string path)
     if (ok == 0) { std::cout << "ERROR NO FILE STOP" << std::endl; return; }
     if (instructions[1].type != InstructionType::STR) { std::cout << "ERROR NO FILE START" << std::endl; return; }
 
+    std::ifstream file2(finalPathPos);
+    for (int j = 1; j <= i; j++) {
+        file2 >> instructions[j].positions.x >> instructions[j].positions.y;
+    }
+    file2.close();
+
+    makeConnections();
 }
 
 void iterateInstructions() 
@@ -304,18 +471,15 @@ void iterateInstructions()
 
 void addInstruction(selectedAreas type, std::string input)
 {
-
+    instructions[i].positions.x = 200.f;
+    instructions[i].positions.y = 50.f;
     switch (type){
         case selectedAreas::pieceStart:
             instructions[i].type = InstructionType::STR;
-            instructions[i].str.x = 250.f;
-            instructions[i].str.y = 30.f;
             instructions[i++].str;
             break;
         case selectedAreas::pieceFinal:
             instructions[i].type = InstructionType::FIN;
-            instructions[i].fin.x = 250.f;
-            instructions[i].fin.y = 70.f;
             instructions[i++].fin;
             break;
         case selectedAreas::pieceInput:
@@ -362,18 +526,116 @@ void addInstruction(selectedAreas type, std::string input)
 
 }
 
-void drawPieces(sf::RenderWindow &window, sf::Font &font) {
+void drawPieces() {
     for (int j = 1; j < i; j++) {
-        Instruction instruction = instructions[j];
-        switch (instruction.type) {
-            case InstructionType::STR:
-                instruction.str.draw(font, window);
-                break;
-            case InstructionType::FIN:
-                instruction.fin.draw(font, window);
-                break;
-            default:
-                break;
+        instructions[j].draw();
+    }
+}
+
+void drawConnections() {
+    for (int j = 1; j < i; j++) {
+        instructions[j].drawConnection();
+    }
+}
+
+void dragPiece(int piece, float x, float y) {
+    Instruction& instruction = instructions[piece];
+    instruction.setPosition(x - instruction.getSize().x / 2, y - instruction.getSize().y / 2);
+}
+
+int selectPiece(float x, float y) {
+    for (int j = 1; j < i; j++) {
+        Instruction &instruction = instructions[j];
+        if (x > instruction.positions.x && x<instruction.positions.x + instruction.getSize().x && y > instruction.positions.y && y < instruction.positions.y + instruction.getSize().y) {
+            instruction.selected = true;
+            return j;
         }
     }
+    return 0;
+}
+
+void deselectPiece(int piece) {
+    instructions[piece].selected = false;
+}
+
+void deselectAll() {
+    for (int j = 1; j <= i; j++)deselectPiece(j);
+}
+
+void editPieceText(int piece, sf::Event::TextEvent input) {
+    std::cout << "AICI" << std::endl;
+    switch (instructions[piece].type) {
+    case InstructionType::IPT:
+    {
+        sf::String variable = instructions[piece].ipt.variable;
+        std::cout << variable.toAnsiString();
+        if (input.unicode == BACKSPACE && (variable.getSize() != 0))variable.erase(variable.getSize() - 1, 1);
+        else if (input.unicode != BACKSPACE) variable = variable + input.unicode;
+        if (int v = varExists(instructions[piece].ipt.variable))variables[v].name = variable.toAnsiString();
+        strcpy(instructions[piece].ipt.variable, variable.toAnsiString().c_str());
+        break;
+    }
+    case InstructionType::PRT:
+    {
+        sf::String variable = instructions[piece].prt.variable;
+        if (input.unicode == BACKSPACE && (variable.getSize() != 0))variable.erase(variable.getSize() - 1, 1);
+        else if (input.unicode != BACKSPACE) variable = variable + input.unicode;
+        strcpy(instructions[piece].prt.variable, variable.toAnsiString().c_str());
+        break;
+    }
+    case InstructionType::OPP:
+    {
+        sf::String expression = instructions[piece].opp.expression;
+        if (input.unicode == BACKSPACE && (expression.getSize() != 0))expression.erase(expression.getSize() - 1, 1);
+        else if (input.unicode != BACKSPACE) expression = expression + input.unicode;
+        strcpy(instructions[piece].opp.expression, expression.toAnsiString().c_str());
+        break;
+    }
+    case InstructionType::IFF:
+    {
+        sf::String expression = instructions[piece].iff.expression;
+        if (input.unicode == BACKSPACE && (expression.getSize() != 0))expression.erase(expression.getSize() - 1, 1);
+        else if (input.unicode != BACKSPACE) expression = expression + input.unicode;
+        strcpy(instructions[piece].iff.expression, expression.toAnsiString().c_str());
+        break;
+    }
+    default:
+        break;
+    }
+}
+
+void deletePiece(int piece) {
+    instructions[piece].type = InstructionType::NLL;
+    instructions[piece].null;
+    instructions[piece].setPosition(0,0);
+    makeConnection(piece, 0);
+    for (int j = 1; j < i; j++) {
+        switch (instructions[j].type) {
+        case InstructionType::STR:
+            if (instructions[j].str.nextIns == piece)makeConnection(j, 0);
+            break;
+        case InstructionType::FIN:
+            break;
+        case InstructionType::IPT:
+            if(instructions[j].ipt.nextIns==piece)makeConnection(j,0);
+            break;
+        case InstructionType::PRT:
+            if(instructions[j].prt.nextIns==piece)makeConnection(j,0);
+            break;
+        case InstructionType::OPP:
+            if(instructions[j].opp.nextIns==piece)makeConnection(j,0);
+            break;
+        case InstructionType::IFF:
+            if(instructions[j].iff.nextInsTrue==piece)makeConnection(j,0);
+            if (instructions[j].iff.nextInsFalse == piece)makeConnectionRight(j, 0);
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void reset() {
+    for (int j = i; j > 1; j--)deletePiece(j);
+    i = 1;
 }

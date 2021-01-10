@@ -4,14 +4,15 @@
 #include "menuActions.h"
 #include "enums.h"
 #include "instructionActions.h"
+#include "windowWrap.h"
 
 
 #define HEIGHT 576
 #define WIDTH 1024
 
 sf::String inputtext, pathtext;
-selectedAreas selectedArea = selectedAreas::none;
-selectedAreas previousArea = selectedAreas::none;
+selectedAreas selectedArea, previousArea = selectedAreas::none;
+sf::RenderWindow* wWrap::m_window = nullptr;
 
 void createApp(sf::RenderWindow  &window) {
     //Background of the app
@@ -28,7 +29,7 @@ void createApp(sf::RenderWindow  &window) {
     createButton.setFillColor(sf::Color(89, 235, 128));
     createButton.setPosition(0, HEIGHT - 50.f);
     sf::Text createButtonText;
-    createButtonText.setFont(WorkSans_Black);
+    createButtonText.setFont(get_fonts().WorkSans_Black);
     createButtonText.setString("Create");
     createButtonText.setPosition(50, HEIGHT - 45.f);
 
@@ -37,7 +38,7 @@ void createApp(sf::RenderWindow  &window) {
     runButton.setFillColor(sf::Color(179, 179, 204));
     runButton.setPosition(200.f, HEIGHT - 50.f);
     sf::Text runButtonText;
-    runButtonText.setFont(WorkSans_Black);
+    runButtonText.setFont(get_fonts().WorkSans_Black);
     runButtonText.setCharacterSize(20);
     runButtonText.setString("RUN");
     runButtonText.setPosition(230, HEIGHT - 38.f);
@@ -45,7 +46,7 @@ void createApp(sf::RenderWindow  &window) {
     generateButton.setFillColor(sf::Color(179, 179, 204));
     generateButton.setPosition(300.f, HEIGHT - 50.f);
     sf::Text generateButtonText;
-    generateButtonText.setFont(WorkSans_Black);
+    generateButtonText.setFont(get_fonts().WorkSans_Black);
     generateButtonText.setCharacterSize(20);
     generateButtonText.setString("C++");
     generateButtonText.setPosition(330, HEIGHT - 38.f);
@@ -58,7 +59,7 @@ void createApp(sf::RenderWindow  &window) {
     path.setFillColor(sf::Color(179, 179, 204));
     path.setPosition(410, HEIGHT - 40.f);
     sf::Text pathText;
-    pathText.setFont(WorkSans_Black);
+    pathText.setFont(get_fonts().WorkSans_Black);
     pathText.setString(pathtext);
     pathText.setCharacterSize(14);
     pathText.setPosition(415, HEIGHT - 35.f);
@@ -66,14 +67,14 @@ void createApp(sf::RenderWindow  &window) {
     saveButton.setFillColor(sf::Color(89, 235, 128));
     saveButton.setPosition(WIDTH-100, HEIGHT - 50.f);
     sf::Text saveButtonText;
-    saveButtonText.setFont(WorkSans_Black);
+    saveButtonText.setFont(get_fonts().WorkSans_Black);
     saveButtonText.setString("SAVE");
     saveButtonText.setPosition(WIDTH-90, HEIGHT - 45.f);
     sf::RectangleShape importButton(sf::Vector2f(100., 50.f));
     importButton.setFillColor(sf::Color(179, 179, 204));
     importButton.setPosition(WIDTH - 200, HEIGHT - 50.f);
     sf::Text importButtonText;
-    importButtonText.setFont(WorkSans_Black);
+    importButtonText.setFont(get_fonts().WorkSans_Black);
     importButtonText.setCharacterSize(20);
     importButtonText.setString("IMPORT");
     importButtonText.setPosition(WIDTH - 190, HEIGHT - 38.f);
@@ -111,7 +112,7 @@ void createApp(sf::RenderWindow  &window) {
     input.setFillColor(sf::Color(179, 179, 204));
     input.setPosition(10, HEIGHT - 90.f);
     sf::Text inputText;
-    inputText.setFont(WorkSans_Black);
+    inputText.setFont(get_fonts().WorkSans_Black);
     inputText.setString(inputtext);
     inputText.setCharacterSize(14);
     inputText.setPosition(15, HEIGHT - 85.f);
@@ -125,7 +126,7 @@ void createApp(sf::RenderWindow  &window) {
     startPiece.setOutlineColor( (selectedArea == selectedAreas::pieceStart) ? sf::Color::Red : sf::Color(100, 149, 237));
     startPiece.setPosition(25.f, 25.f);
     sf::Text startPieceText;
-    startPieceText.setFont(WorkSans_Black);
+    startPieceText.setFont(get_fonts().WorkSans_Black);
     startPieceText.setString("S");
     startPieceText.setFillColor((selectedArea == selectedAreas::pieceStart) ? sf::Color::Red : sf::Color(100, 149, 237));
     startPieceText.setPosition(40.f, 30.f);
@@ -136,7 +137,7 @@ void createApp(sf::RenderWindow  &window) {
     finalPiece.setOutlineColor((selectedArea == selectedAreas::pieceFinal) ? sf::Color::Red : sf::Color(100, 149, 237));
     finalPiece.setPosition(125.f, 25.f);
     sf::Text finalPieceText;
-    finalPieceText.setFont(WorkSans_Black);
+    finalPieceText.setFont(get_fonts().WorkSans_Black);
     finalPieceText.setString("F");
     finalPieceText.setFillColor((selectedArea == selectedAreas::pieceFinal) ? sf::Color::Red : sf::Color(100, 149, 237));
     finalPieceText.setPosition(140.f, 30.f);
@@ -151,7 +152,7 @@ void createApp(sf::RenderWindow  &window) {
     inputPiece.setOutlineThickness(5);
     inputPiece.setOutlineColor((selectedArea == selectedAreas::pieceInput) ? sf::Color::Red : sf::Color(100, 149, 237));
     sf::Text inputPieceText;
-    inputPieceText.setFont(WorkSans_ExtraLight);
+    inputPieceText.setFont(get_fonts().WorkSans_ExtraLight);
     inputPieceText.setString("INPUT");
     inputPieceText.setFillColor((selectedArea == selectedAreas::pieceInput) ? sf::Color::Red : sf::Color(100, 149, 237));
     inputPieceText.setPosition(60, 130.f);
@@ -166,7 +167,7 @@ void createApp(sf::RenderWindow  &window) {
     outputPiece.setOutlineThickness(5);
     outputPiece.setOutlineColor((selectedArea == selectedAreas::pieceOutput) ? sf::Color::Red : sf::Color(100, 149, 237));
     sf::Text outputPieceText;
-    outputPieceText.setFont(WorkSans_ExtraLight);
+    outputPieceText.setFont(get_fonts().WorkSans_ExtraLight);
     outputPieceText.setCharacterSize(24);
     outputPieceText.setString("OUTPUT");
     outputPieceText.setFillColor((selectedArea == selectedAreas::pieceOutput) ? sf::Color::Red : sf::Color(100, 149, 237));
@@ -178,7 +179,7 @@ void createApp(sf::RenderWindow  &window) {
     operationPiece.setOutlineThickness(5);
     operationPiece.setOutlineColor((selectedArea == selectedAreas::pieceOperation) ? sf::Color::Red : sf::Color(100, 149, 237));
     sf::Text operationPieceText;
-    operationPieceText.setFont(WorkSans_ExtraLight);
+    operationPieceText.setFont(get_fonts().WorkSans_ExtraLight);
     operationPieceText.setCharacterSize(24);
     operationPieceText.setString("OPERATION");
     operationPieceText.setFillColor((selectedArea == selectedAreas::pieceOperation) ? sf::Color::Red : sf::Color(100, 149, 237));
@@ -193,7 +194,7 @@ void createApp(sf::RenderWindow  &window) {
     ifPiece.setOutlineThickness(5);
     ifPiece.setOutlineColor((selectedArea == selectedAreas::pieceIf) ? sf::Color::Red : sf::Color(100, 149, 237));
     sf::Text ifPieceText;
-    ifPieceText.setFont(WorkSans_ExtraLight);
+    ifPieceText.setFont(get_fonts().WorkSans_ExtraLight);
     ifPieceText.setCharacterSize(24);
     ifPieceText.setString("IF");
     ifPieceText.setFillColor((selectedArea == selectedAreas::pieceIf) ? sf::Color::Red : sf::Color(100, 149, 237));
@@ -241,10 +242,13 @@ void createApp(sf::RenderWindow  &window) {
 
 int main()
 {
-    fonts();
-
+    int selectedPiece = 0;
+    int previousPiece = 0;
+    int previousPiece2 = 0;
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Interschem", sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
+
+    wWrap::setWindow(window);
 
     while (window.isOpen())
     {
@@ -256,13 +260,24 @@ int main()
                     window.close();
                     break;
                 case sf::Event::TextEntered:
+                    if (previousPiece && event.text.unicode == BACKSPACE && previousPiece != previousPiece2)deletePiece(previousPiece);
+                    if (previousPiece && previousPiece2 && previousPiece == previousPiece2)editPieceText(previousPiece, event.text); 
                     if(selectedArea == selectedAreas::input)
                         handleInputChange(event.text, inputtext);
                     if (selectedArea == selectedAreas::path)
                         handleInputChange(event.text, pathtext);
                     break;
                 case sf::Event::MouseButtonPressed:
-                    std::cout << event.mouseButton.x << " " << event.mouseButton.y <<std::endl;
+                    selectedPiece = selectPiece(event.mouseButton.x, event.mouseButton.y);
+                    if (!selectedPiece && selectedArea !=selectedAreas::runButton)deselectAll();
+                    if (previousPiece && selectedPiece && previousPiece != selectedPiece && event.mouseButton.button == sf::Mouse::Left)makeConnection(previousPiece, selectedPiece);
+                    if (previousPiece && selectedPiece && previousPiece != selectedPiece && event.mouseButton.button == sf::Mouse::Right)makeConnectionRight(previousPiece, selectedPiece);
+                    if (previousPiece != selectedPiece)deselectPiece(previousPiece);
+                    break;
+                case sf::Event::MouseButtonReleased:
+                    previousPiece2 = previousPiece;
+                    previousPiece = selectedPiece;
+                    selectedPiece = 0;
                     previousArea = selectedArea;
                     selectedArea = mouseSelect(event.mouseButton.x, event.mouseButton.y);
                     switch (selectedArea) {
@@ -286,8 +301,16 @@ int main()
                         case selectedAreas::generateButton:
                             createCode();
                             break;
+                        case selectedAreas::resetButton:
+                            reset();
+                            break;
                     }
                     break;
+                case sf::Event::MouseMoved:
+                    if (selectedPiece) {
+                        if(event.mouseMove.x > 200 && event.mouseMove.x < 1024 && event.mouseMove.y > 0 && event.mouseMove.y < 526)
+                        dragPiece(selectedPiece, event.mouseMove.x, event.mouseMove.y);
+                    }
                 default:
                     break;
             }
@@ -295,7 +318,8 @@ int main()
 
         window.clear();
         createApp(window);
-        drawPieces(window, WorkSans_Black);
+        drawConnections();
+        drawPieces();
         window.display();
 
     }

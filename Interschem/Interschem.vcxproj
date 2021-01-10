@@ -158,12 +158,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="fonts.cpp" />
-    <ClCompile Include="instructionDrawing.cpp" />
     <ClCompile Include="instructionActions.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="instructionDrawing.h" />
     <ClInclude Include="enums.h" />
     <ClInclude Include="exprtk.hpp" />
     <ClInclude Include="instructionActions.h" />
@@ -171,6 +169,7 @@
     <ClInclude Include="instructionStructure.h" />
     <ClInclude Include="menuActions.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="windowWrap.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Interschem.rc" />

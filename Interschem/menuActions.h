@@ -31,6 +31,8 @@ selectedAreas mouseSelect(int x, int y) {
 		return selectedAreas::runButton;
 	if (x >= 300 && x < 400 && y >= 526 && y < 576)
 		return selectedAreas::generateButton;
+	if (x > 984 && x < 1024 && y >= 0 && y < 40)
+		return selectedAreas::resetButton;
 	return selectedAreas::none;
 }
 

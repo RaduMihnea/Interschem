@@ -4,7 +4,6 @@
 #define BACKSPACE 0x00000008
 
 selectedAreas mouseSelect(int x, int y) {
-
 	if (x >= 10 && x <= 190 && y >= 485 && y <= 515)
 		return selectedAreas::input;
 	if (x >= 0 && x <= 200 && y >= 525 && y <= 575)

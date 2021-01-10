@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <fstream>
 #include <string>
 #include <sstream>
@@ -7,10 +7,9 @@
 #include "exprtk.hpp"
 #include "instructionActions.h"
 
-
 #define BACKSPACE 0x00000008
 
-
+//Setup part for the exprtk library so the expressions used are compiled accordingly
 typedef exprtk::symbol_table<double> symbol_table_t;
 typedef exprtk::expression<double>     expression_t;
 typedef exprtk::parser<double>             parser_t;
@@ -19,18 +18,31 @@ expression_t expression;
 parser_t parser;
 symbol_table_t symbol_table;
 
+/*  Simple declaration of a variable structure
+*   @attribute double value
+*   @attribute std::string name 
+*/
 struct Variable 
 {
     double value;
     std::string name;
 };
 
+// Main arrays used in the file that store up the Instructions & variables. The 101 number can be changed.
 Instruction instructions[101];
 Variable variables[101];
 
+// Counter for the number of variables and instructions present in the current schema.
 int vars = 1;
 int i = 1;
 
+/*
+* Checks if a certain variable exists by name;
+* 
+* @param char* variable - the name we want to find
+* @return int - the index of the value we found; 0 if not found
+*
+*/
 int varExists(char* variable) {
     for (int j = 1; j < vars; j++) {
         if (variables[j].name == variable)return j;
@@ -38,6 +50,12 @@ int varExists(char* variable) {
     return 0;
 }
 
+/*
+* Function for setting up all connections when importing a file, will go thru every instruction and set up the according connection
+*
+* @return void 
+*
+*/
 void makeConnections() {
     for (int j = 1; j < i; j++) {
         switch (instructions[j].type) {
@@ -65,6 +83,14 @@ void makeConnections() {
     }
 }
 
+/*
+* Function for creating a connection between 2 pieces. If second piece is equal to 0, will remove any connection from the first piece.
+*
+* @param int p1 - index of the first piece in the connection
+* @param int p2 - index of the second piece in the connection
+* @return void
+*
+*/
 void makeConnection(int p1, int p2) {
     switch (instructions[p1].type) {
     case InstructionType::STR:
@@ -152,6 +178,14 @@ void makeConnection(int p1, int p2) {
     }
 }
 
+/*
+* Function for creating a connection between the if piece and another piece in case of a false result. If second piece is equal to 0, will remove any connection from the first piece.
+*
+* @param int p1 - index of the first piece in the connection
+* @param int p2 - index of the second piece in the connection
+* @return void
+*
+*/
 void makeConnectionRight(int p1, int p2) {
     if (instructions[p1].type == InstructionType::IFF) {
         instructions[p1].iff.nextInsFalse = p2;
@@ -172,6 +206,15 @@ void makeConnectionRight(int p1, int p2) {
     }
 }
 
+/*
+* Recursive function for running a certain instruction in a piece. At the end will call itself with the next piece in order.
+* The function will set any piece it goes through as selected.
+* 
+*
+* @param int instructioNo - index of the instruction to be run
+* @return void
+*
+*/
 void runInstruction(int instructionNo) 
 {
     Instruction instruction = instructions[instructionNo];
@@ -182,17 +225,17 @@ void runInstruction(int instructionNo)
         runInstruction(instruction.str.nextIns);
         break;
     case InstructionType::FIN:
-        std::cout << "FINALIZARE" << std::endl;
+        //std::cout << "FINALIZARE" << std::endl;
         return;
     case InstructionType::IPT:
         double value;
         std::cout << "Enter variable's " << instruction.ipt.variable << " value: "; std::cin >> value;
         if (int v = varExists(instruction.ipt.variable)) {
-            std::cout << "Changed existing value" << std::endl;
+            //std::cout << "Changed existing value" << std::endl;
             variables[v].value = value;
         }
         else {
-            std::cout << "Added new variable" << std::endl;
+            //std::cout << "Added new variable" << std::endl;
             variables[vars].name = instruction.ipt.variable; variables[vars].value = value;
             symbol_table.add_variable(instruction.ipt.variable, variables[vars].value);
             vars++;
@@ -222,10 +265,25 @@ void runInstruction(int instructionNo)
     }
 }
 
+/*
+* Function for starting the recursive nature of the runInstruction() function. Will find the first start piece and then run the instruction inside it.
+*
+* @return void
+*
+*/
 void runCode() {
+    int j = 1;
+    vars = 1;
+    while (instructions[j].type != InstructionType::STR)j++;
     runInstruction(1);
 }
 
+/*
+* Function for creating the according C++ code associated to the Schema provided. Will print the working code in the console.
+*
+* @return void
+*
+*/
 void createCode() 
 {
 
@@ -272,6 +330,14 @@ void createCode()
     std::cout << "}";
 }
 
+/*
+* Function for saving the current Schema. 2 files will be created: "NAME".sch - file where the actual instructions are saved at & "NAME".pos - file where the positions of the pieces are remembered at
+* Files will be saved in the Schemas/ folder in the project directory
+* 
+* @param std::string path - The name of the schema to be saved
+* @return void
+*
+*/
 void saveToFile(std::string path) 
 {
 
@@ -313,6 +379,14 @@ void saveToFile(std::string path)
     
 }
 
+/*
+* Function for importing a Schema. 2 files will be accesed: "NAME".sch - file where the actual instructions are saved at & "NAME".pos - file where the positions of the pieces are remembered at.
+* Files will be imported from the Schemas/ folder in the project directory.
+*
+* @param std::string path - The name of the schema to be imported
+* @return void
+*
+*/
 void importFromFile(std::string path) 
 {
 
@@ -440,6 +514,13 @@ void importFromFile(std::string path)
     makeConnections();
 }
 
+/*
+* Function for going thru each instruction present in the Instructions array and printing their types. 
+* USED ONLY FOR DEBUGGING
+*
+* @return void
+*
+*/
 void iterateInstructions() 
 {
     for (int j = 1; j < i; j++) {
@@ -469,6 +550,14 @@ void iterateInstructions()
     std::cout << std::endl;
 }
 
+/*
+* Function for adding a new instruction to the Insruction array.
+*
+* @param selectedAreas type - the type of the newly created piece
+* @param std::string input - eventual additional information needed for the pieces
+* @return void
+*
+*/
 void addInstruction(selectedAreas type, std::string input)
 {
     instructions[i].positions.x = 200.f;
@@ -521,28 +610,54 @@ void addInstruction(selectedAreas type, std::string input)
         default:
             break;
     }
-
-    iterateInstructions();
-
 }
 
+/*
+* Function for going thru all pieces and calling their .draw() function. Will draw all pieces
+*
+* @return void
+*
+*/
 void drawPieces() {
     for (int j = 1; j < i; j++) {
         instructions[j].draw();
     }
 }
 
+/*
+* Function for going thru all connections and calling their .draw() function. Will draw all connections.
+*
+* @return void
+*
+*/
 void drawConnections() {
     for (int j = 1; j < i; j++) {
         instructions[j].drawConnection();
     }
 }
 
+/*
+* Handles the drag ability of each piece. Will set the cursor in the middle of each piece.
+*
+* @param int piece - index of the piece
+* @param float x - x coordinate of the mouse
+* @param float y - y coordinate of the mouse
+* @return void
+*
+*/
 void dragPiece(int piece, float x, float y) {
     Instruction& instruction = instructions[piece];
     instruction.setPosition(x - instruction.getSize().x / 2, y - instruction.getSize().y / 2);
 }
 
+/*
+* Check if a piece has been selected. Iterate thru every piece and find if the cursor sits in any of them. Return the first one found.
+*
+* @param float x - x coordinate of the mouse
+* @param float y - y coordinate of the mouse
+* @return int - index of the selected piece
+*
+*/
 int selectPiece(float x, float y) {
     for (int j = 1; j < i; j++) {
         Instruction &instruction = instructions[j];
@@ -554,21 +669,40 @@ int selectPiece(float x, float y) {
     return 0;
 }
 
+/*
+* Deselect a certain piece
+*
+* @param int piece - index of the piece
+* @return void
+*
+*/
 void deselectPiece(int piece) {
     instructions[piece].selected = false;
 }
 
+/*
+* Deselect all pieces. 
+*
+* @return void
+*
+*/
 void deselectAll() {
     for (int j = 1; j <= i; j++)deselectPiece(j);
 }
 
+/*
+* Handles edit abilities of the text written inside each piece. Alltough leaving a piece with no text is possible, it is heavily unadvised as it will result in an unpredicted comportament.
+*
+* @param int piece - index of the piece
+* @param sf::Event::TextEvent input - the input received from the users keyboard
+* @return void
+*
+*/
 void editPieceText(int piece, sf::Event::TextEvent input) {
-    std::cout << "AICI" << std::endl;
     switch (instructions[piece].type) {
     case InstructionType::IPT:
     {
         sf::String variable = instructions[piece].ipt.variable;
-        std::cout << variable.toAnsiString();
         if (input.unicode == BACKSPACE && (variable.getSize() != 0))variable.erase(variable.getSize() - 1, 1);
         else if (input.unicode != BACKSPACE) variable = variable + input.unicode;
         if (int v = varExists(instructions[piece].ipt.variable))variables[v].name = variable.toAnsiString();
@@ -604,11 +738,19 @@ void editPieceText(int piece, sf::Event::TextEvent input) {
     }
 }
 
+/*
+* Delete a certain piece. Will set its type to null, delete the union value, set its position to the origin, delete its connections and any connections to it.
+*
+* @param int piece - index of the piece
+* @return void
+*
+*/
 void deletePiece(int piece) {
+    if (instructions[piece].type == InstructionType::IFF)makeConnectionRight(piece, 0);
+    makeConnection(piece, 0);
     instructions[piece].type = InstructionType::NLL;
     instructions[piece].null;
     instructions[piece].setPosition(0,0);
-    makeConnection(piece, 0);
     for (int j = 1; j < i; j++) {
         switch (instructions[j].type) {
         case InstructionType::STR:
@@ -635,6 +777,14 @@ void deletePiece(int piece) {
     }
 }
 
+/*
+* Delete all pieces by calling the deletePiece() function for each of those.
+* Goes backward thru them because why not ¯\_(ツ)_/¯
+*
+* @param int piece - index of the piece
+* @return void
+*
+*/
 void reset() {
     for (int j = i; j > 1; j--)deletePiece(j);
     i = 1;

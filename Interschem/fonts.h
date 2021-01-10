@@ -4,6 +4,13 @@
 #include <SFML/Graphics.hpp>
 #include <mutex>
 
+
+/*
+*	Worst part of all of them. This file imports the fonts used into local memory so they can be used in the SFML Library. 
+*	Because many conflicts appeared with multiple declarations of the same font in different files, the mutex flag has been chosen to only import the files once.
+*	Afterwards, the function get_fonts() returns all available font without importing them more than once. 
+*	This function makes the font avaliable globally in the project without setting up global variables ( that SFML didn't allow )
+*/
 struct Fonts {
 	sf::Font& WorkSans_Black;
 	sf::Font& WorkSans_BlackItalic;

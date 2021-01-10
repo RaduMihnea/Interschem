@@ -6,14 +6,23 @@
 #include "instructionActions.h"
 #include "windowWrap.h"
 
-
+// Sizes of the application. DO NOT CHANGE, APP IS NOT RESIZABLE
 #define HEIGHT 576
 #define WIDTH 1024
 
+//Variables used with the manipulation of user input
 sf::String inputtext, pathtext;
 selectedAreas selectedArea, previousArea = selectedAreas::none;
+
+//Must set the this at the start so that the windowWrap header works.
 sf::RenderWindow* wWrap::m_window = nullptr;
 
+/*
+* Draw the main, unmovable, graphical components of the application. these are static and will not change.
+* 
+* @param sf::RenderWindow &window - accepts a reference to the window where it should draw at
+* @return void
+*/
 void createApp(sf::RenderWindow  &window) {
     //Background of the app
     sf::RectangleShape Background(sf::Vector2f(WIDTH, HEIGHT));
@@ -240,14 +249,21 @@ void createApp(sf::RenderWindow  &window) {
     window.draw(ifPieceText);
 }
 
+/*
+*   Main function of the application. Handles all user input.
+*/
 int main()
 {
+    //variables used for controlling pieces in the workarea
     int selectedPiece = 0;
     int previousPiece = 0;
     int previousPiece2 = 0;
+    
+    //Create the application window
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Interschem", sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
+    //Set the application window in the windowWrap to make it globally accesible
     wWrap::setWindow(window);
 
     while (window.isOpen())
@@ -260,8 +276,11 @@ int main()
                     window.close();
                     break;
                 case sf::Event::TextEntered:
+                    //Delete a piece if Backspace is pressed and there hasn't been a doubleclick
                     if (previousPiece && event.text.unicode == BACKSPACE && previousPiece != previousPiece2)deletePiece(previousPiece);
+                    //Edit a pieces text with double-click
                     if (previousPiece && previousPiece2 && previousPiece == previousPiece2)editPieceText(previousPiece, event.text); 
+                    //Handle input change in the import/add fields
                     if(selectedArea == selectedAreas::input)
                         handleInputChange(event.text, inputtext);
                     if (selectedArea == selectedAreas::path)
@@ -270,15 +289,19 @@ int main()
                 case sf::Event::MouseButtonPressed:
                     selectedPiece = selectPiece(event.mouseButton.x, event.mouseButton.y);
                     if (!selectedPiece && selectedArea !=selectedAreas::runButton)deselectAll();
+                    //Make connections if its the case
                     if (previousPiece && selectedPiece && previousPiece != selectedPiece && event.mouseButton.button == sf::Mouse::Left)makeConnection(previousPiece, selectedPiece);
                     if (previousPiece && selectedPiece && previousPiece != selectedPiece && event.mouseButton.button == sf::Mouse::Right)makeConnectionRight(previousPiece, selectedPiece);
+                    //Deselect a piece if stepped out of order 
                     if (previousPiece != selectedPiece)deselectPiece(previousPiece);
                     break;
                 case sf::Event::MouseButtonReleased:
+                    //Changed the history of selected Areas/Pieces
                     previousPiece2 = previousPiece;
                     previousPiece = selectedPiece;
                     selectedPiece = 0;
                     previousArea = selectedArea;
+                    //Check if a new menu Area has been selected;
                     selectedArea = mouseSelect(event.mouseButton.x, event.mouseButton.y);
                     switch (selectedArea) {
                         case selectedAreas::createButton:

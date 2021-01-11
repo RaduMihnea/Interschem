@@ -96,7 +96,6 @@ void makeConnection(int p1, int p2) {
     case InstructionType::STR:
         instructions[p1].str.nextIns = p2;
         if (!p2) {
-            std::cout << "AICI " <<p1<< std::endl;
             instructions[p1].str.connection.startPos = nullptr;
             instructions[p1].str.connection.startSize = { 0,0 };
             instructions[p1].str.connection.endPos = nullptr;
@@ -274,8 +273,8 @@ void runInstruction(int instructionNo)
 void runCode() {
     int j = 1;
     vars = 1;
-    while (instructions[j].type != InstructionType::STR)j++;
-    runInstruction(1);
+    while (instructions[j].type != InstructionType::STR) j++; 
+    runInstruction(j);
 }
 
 /*
@@ -389,8 +388,8 @@ void saveToFile(std::string path)
 */
 void importFromFile(std::string path) 
 {
-
-    int ok = 0;
+    int ok_f = 0;
+    int ok_s = 0;
     i = 1;
     vars = 1;
 
@@ -418,12 +417,13 @@ void importFromFile(std::string path)
                     std::cout << "Line " << i << ": NEXT LINE NOT FOUND" << std::endl;
                     return;
                 }
+                ok_s = 1;
                 i++;
             }
             if (type == "FIN")
             {
                 instructions[i].type = InstructionType::FIN;
-                ok = 1;
+                ok_f = 1;
                 i++;
             }
             if (type == "IPT")
@@ -502,8 +502,8 @@ void importFromFile(std::string path)
         file.close();
     }
 
-    if (ok == 0) { std::cout << "ERROR NO FILE STOP" << std::endl; return; }
-    if (instructions[1].type != InstructionType::STR) { std::cout << "ERROR NO FILE START" << std::endl; return; }
+    if (!ok_f) { std::cout << "ERROR NO FILE STOP" << std::endl; return; }
+    if (!ok_s) { std::cout << "ERROR NO FILE START" << std::endl; return; }
 
     std::ifstream file2(finalPathPos);
     for (int j = 1; j <= i; j++) {

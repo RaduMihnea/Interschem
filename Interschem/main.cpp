@@ -42,6 +42,13 @@ void createApp(sf::RenderWindow  &window) {
     createButtonText.setString("Create");
     createButtonText.setPosition(50, HEIGHT - 45.f);
 
+    //Reset Button
+    sf::Text resetButtonText;
+    resetButtonText.setFont(get_fonts().WorkSans_Black);
+    resetButtonText.setString("R");
+    resetButtonText.setCharacterSize(30);
+    resetButtonText.setPosition(WIDTH - 30, 0);
+
     //Run/Generate
     sf::RectangleShape runButton(sf::Vector2f(100.f, 50.f));
     runButton.setFillColor(sf::Color(179, 179, 204));
@@ -214,6 +221,7 @@ void createApp(sf::RenderWindow  &window) {
     window.draw(Menu);
     window.draw(createButton);
     window.draw(createButtonText);
+    window.draw(resetButtonText);
     window.draw(runButton);
     window.draw(runButtonText);
     window.draw(generateButton);

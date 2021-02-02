@@ -1,0 +1,8 @@
+STR 2
+IPT N 3
+IPT F 4
+IFF N>0 5 7
+OPP F*=N 6
+OPP N-=1 4
+PRT F 8
+FIN

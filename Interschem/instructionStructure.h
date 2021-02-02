@@ -198,9 +198,23 @@ struct IfInstruction
         ifPieceText.setString(expression);
         ifPieceText.setFillColor(selected ? sf::Color::Red : sf::Color(100, 149, 237));
         ifPieceText.setPosition(x+80 - ifPieceText.getLocalBounds().width / 2, y+40 - ifPieceText.getLocalBounds().height / 2);
+        sf::Text ifT;
+        ifT.setFont(get_fonts().WorkSans_ExtraLight);
+        ifT.setCharacterSize(24);
+        ifT.setString("T");
+        ifT.setFillColor(selected ? sf::Color::Red : sf::Color(100, 149, 237));
+        ifT.setPosition(x - 25, y+45);
+        sf::Text ifF;
+        ifF.setFont(get_fonts().WorkSans_ExtraLight);
+        ifF.setCharacterSize(24);
+        ifF.setString("F");
+        ifF.setFillColor(selected ? sf::Color::Red : sf::Color(100, 149, 237));
+        ifF.setPosition(x + 175, y+45);
 
         wWrap::getWindow().draw(ifPiece);
         wWrap::getWindow().draw(ifPieceText);
+        wWrap::getWindow().draw(ifT);
+        wWrap::getWindow().draw(ifF);
     }
 };
 

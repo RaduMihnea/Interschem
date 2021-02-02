@@ -51,31 +51,31 @@ inline Fonts get_fonts()
 	static sf::Font WorkSans_ExtraLightItalic;
 
 	std::call_once(flag, []() {
-		if (!WorkSans_Black.loadFromFile("WorkSans-Black.ttf"))
+		if (!WorkSans_Black.loadFromFile("Fonts/WorkSans-Black.ttf"))
 		{
 			std::cout << "ERROR LOADING FONT";
 		}
-		if (!WorkSans_BlackItalic.loadFromFile("WorkSans-BlackItalic.ttf"))
+		if (!WorkSans_BlackItalic.loadFromFile("Fonts/WorkSans-BlackItalic.ttf"))
 		{
 			std::cout << "ERROR LOADING FONT";
 		}
-		if (!WorkSans_Bold.loadFromFile("WorkSans-Bold.ttf"))
+		if (!WorkSans_Bold.loadFromFile("Fonts/WorkSans-Bold.ttf"))
 		{
 			std::cout << "ERROR LOADING FONT";
 		}
-		if (!WorkSans_BoldItalic.loadFromFile("WorkSans-BoldItalic.ttf"))
+		if (!WorkSans_BoldItalic.loadFromFile("Fonts/WorkSans-BoldItalic.ttf"))
 		{
 			std::cout << "ERROR LOADING FONT";
 		}
-		if (!WorkSans_ExtraBoldItalic.loadFromFile("WorkSans-ExtraBoldItalic.ttf"))
+		if (!WorkSans_ExtraBoldItalic.loadFromFile("Fonts/WorkSans-ExtraBoldItalic.ttf"))
 		{
 			std::cout << "ERROR LOADING FONT";
 		}
-		if (!WorkSans_ExtraLight.loadFromFile("WorkSans-ExtraLight.ttf"))
+		if (!WorkSans_ExtraLight.loadFromFile("Fonts/WorkSans-ExtraLight.ttf"))
 		{
 			std::cout << "ERROR LOADING FONT";
 		}
-		if (!WorkSans_ExtraLightItalic.loadFromFile("WorkSans-ExtraLightItalic.ttf"))
+		if (!WorkSans_ExtraLightItalic.loadFromFile("Fonts/WorkSans-ExtraLightItalic.ttf"))
 		{
 			std::cout << "ERROR LOADING FONT";
 		}
